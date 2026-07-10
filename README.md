@@ -1,1 +1,1 @@
-this is my Nano7 repository and the github pages isnt published yet so stay tuned
+this is my Nano7 repository and the github pages is published so play it
