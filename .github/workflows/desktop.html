@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nano7 X64</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  
+  <!-- Links the official 7.css framework for authentic window designs -->
+  <link rel="stylesheet" href="https://unpkg.com/7.css">
+
+  <style>
+    /* Root setup: Dark background container to contrast the fixed desktop frame */
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #111111; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-family: "Segoe UI", sans-serif;
+      user-select: none; 
+    }
+
+    /* FIXED WINDOWS 7 DESKTOP HOUSING CAPSULE IN 800x600PX RESOLUTION */
+    .desktop-environment {
+      width: 800px;
+      height: 600px;
+      background-image: url('https://tejasvarman142.neocities.org/bubbles.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      position: relative;
+      box-sizing: border-box;
+      padding: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      border: 1px solid #333333;
+      transition: background 0.3s ease; 
+    }
+
+    /* Target positioning for your Notepad app container */
+    .notepad-window {
+      width: 420px;
+      height: 280px; 
+      position: absolute;
+      top: 60px;
+      left: 60px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Interactive title bar handles for clicking and moving windows */
+    .notepad-window .title-bar {
+      cursor: move;
+    }
+
+    /* Layout override to make textarea expand smoothly into container resizing frames */
+    .notepad-window .window-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 4px;
+      position: relative;
+    }
+
+    .notepad-window textarea {
+      width: 100%;
+      height: 100%;
+      flex: 1;
+      resize: none;
+      font-family: Consolas, monospace;
+      box-sizing: border-box;
+    }
+
+    /* Corner handles overlay mapped for precise diagonal scaling operations */
+    .window-resize-handle {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 12px;
+      height: 12px;
+      cursor: se-resize;
+      z-index: 999;
+    }
+
+    /* Custom Floating Start Menu Container built strictly on the 7.css engine */
+    .start-menu {
+      display: none; 
+      position: absolute;
+      bottom: 43px; 
+      left: 5px;
+      width: 440px; 
+      z-index: 100000; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    /* Overrides internal layout box to structure side-by-side flex panels safely */
+    .start-menu-grid {
+      display: flex !important;
+      flex-direction: row !important;
+      width: 100%;
+      background: #f0f0f0;
+    }
+
+    /* Left panel styling for regular apps list */
+    .start-menu-left {
+      flex: 1 !important;
+      background: #ffffff;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #c0c0c0;
+      border-radius: 3px 0 0 3px;
+    }
+
+    .menu-section-title {
+      margin: 0 0 6px 4px;
+      font-size: 11px;
+      color: #707070;
+    }
+
+    .app-list {
+      flex: 1;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      background: transparent !important;
+    }
+
+    .app-list li a {
+      padding: 6px 8px !important;
+      display: block;
+      font-size: 12px;
+      border-radius: 3px;
+      text-decoration: none;
+      color: #333;
+    }
+    .app-list li a:hover {
+      background: #e5f1fb;
+      color: #000000;
+    }
+
+    .all-programs-btn {
+      margin-top: 10px;
+      padding: 6px 8px;
+      font-size: 12px;
+      border-top: 1px solid #e0e0e0;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .all-programs-btn:hover {
+      background: #e5f1fb;
+    }
+
+    /* Right column sidebar profile options pane */
+    .start-menu-right {
+      width: 180px; 
+      background: linear-gradient(to right, #e3edf7 0%, #cee0f2 100%);
+      border-left: 1px solid #b8c7d6;
+      border-top: 1px solid #ffffff;
+      border-bottom: 1px solid #ffffff;
+      padding: 12px 10px;
+      display: flex;
+      flex-direction: column;
+      border-radius: 0 3px 3px 0;
+      align-items: center; 
+    }
+
+    /* Custom picture frame style scaled up to 100x100px */
+    .profile-frame-box {
+      width: 100px; 
+      height: 100px; 
+      background-image: url('https://tejasvarman142.neocities.org/border.png');
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 6px;
+    }
+
+    /* Inside avatar picture locked down perfectly to your preferred 65px size */
+    .profile-avatar-img {
+      width: 65px; 
+      height: 65px; 
+      border-radius: 2px;
+      display: block;
+      object-fit: cover; 
+    }
+
+    .username-text {
+      font-weight: bold;
+      font-size: 12px;
+      color: #1e395b;
+      text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
+      margin-bottom: 12px;
+      text-decoration: none;
+    }
+
+    /* Right columns internal links directories formatting */
+    .system-links {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .sys-link {
+      padding: 4px 6px;
+      font-size: 12px;
+      color: #1e395b;
+      text-decoration: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .sys-link:hover {
+      background: rgba(255, 255, 255, 0.6);
+      color: #003399;
+    }
+
+    .menu-divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.6);
+      border-bottom: 1px solid #b8c7d6;
+      margin: 5px 0;
+    }
+
+    /* Interactive Background Customizer dropdown layout elements */
+    .bg-selector-wrap {
+      width: 100%;
+      padding: 4px 6px;
+      box-sizing: border-box;
+      margin-top: 2px;
+    }
+    .bg-selector-wrap label {
+      font-size: 10px;
+      color: #555;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .bg-selector-wrap select {
+      width: 100%;
+      font-size: 11px;
+      padding: 2px;
+    }
+
+    /* Log Off button style */
+    .logoff-button {
+      display: block;
+      text-align: center;
+      padding: 4px;
+      background: linear-gradient(to bottom, #ffffff 0%, #e1e1e1 100%);
+      border: 1px solid #707070;
+      border-radius: 3px;
+      color: #333333;
+      font-size: 11px;
+      font-weight: bold;
+      text-decoration: none;
+      box-shadow: inset 0 1px 0 #ffffff;
+      margin-top: 12px;
+    }
+
+    /* Standard Windows 7 Taskbar using your custom p.png background */
+    .taskbar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 40px;
+      background-image: url('https://tejasvarman142.neocities.org/p.png');
+      background-repeat: no-repeat;
+      background-position: left bottom;
+      background-size: 100% 100%;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Invisible hit-box placed perfectly over the image's printed start orb */
+    .invisible-start-click {
+      width: 50px;
+      height: 40px;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    /* The custom Windows 7 System Tray Notification Balloon */
+    .win7-balloon {
+      position: absolute;
+      bottom: 55px;
+      right: 15px;
+      width: 270px;
+      background: linear-gradient(to bottom, #ffffff 0%, #f2f2f2 100%);
+      border: 1px solid #ababab;
+      border-radius: 5px;
+      padding: 10px 14px;
+      box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+      z-index: 99999;
+    }
+
+    .balloon-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .balloon-title {
+      font-weight: bold;
+      font-size: 12px;
+      color: #003399;
+    }
+
+    .balloon-close {
+      background: none;
+      border: none;
+      color: #707070;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .balloon-content {
+      font-size: 11px;
+      color: #333333;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- The desktop environment wrapper handles the exact 800x600 size constraints -->
+  <div class="desktop-environment" id="desktopEnv">
+
+    <!-- 1. Draggable and Resizable 7.css Notepad Window Frame -->
+    <div class="window notepad-window" id="notepadWin">
+      <div class="title-bar" id="notepadHeader">
+        <div class="title-bar-text">umm.txt - Notepad</div>
+        <div class="title-bar-controls">
+          <button aria-label="Minimize"></button>
+          <button aria-label="Maximize"></button>
+          <button aria-label="Close" onclick="document.getElementById('notepadWin').style.display='none'"></button>
+        </div>
+      </div>
+      <div class="window-body">
+        <textarea readonly>
+sorry for interrupting you but i just want to say that this project was inspired by all of you in neocities
+        </textarea>
+        <!-- Custom bottom-right resize corner point tracking coordinate mutations -->
+        <div class="window-resize-handle" id="notepadResizeHandle"></div>
+      </div>
+    </div>
+
+    <!-- 2. The Custom Windows 7 System Tray Balloon -->
+    <div class="win7-balloon">
+      <div class="balloon-header">
+        <span class="balloon-title">Intel Graphics</span>
+        <button class="balloon-close" onclick="this.parentElement.parentElement.remove()">×</button>
+      </div>
+      <div class="balloon-content">
+        Resolution changed to 800x600px.
+      </div>
+    </div>
+
+    <!-- 3. Stabilized 7.css Custom Start Menu Layout -->
+    <div class="window start-menu" id="startMenu">
+      <div class="window-body" style="padding: 2px !important; margin: 0 !important;">
+        
+        <div class="start-menu-grid">
+          <!-- LEFT: Applications Area -->
+          <div class="start-menu-left">
+            <p class="menu-section-title">Pinned Programs</p>
+            <ul class="tree-view app-list">
+              <li><a onclick="document.getElementById('notepadWin').style.display='flex'">📝 Notepad</a></li>
+              <li><a>🌐 Internet Explorer</a></li>
+              <li><a>🎬 Windows Media Player</a></li>
+              <li><a>🎨 Paint</a></li>
+              <li><a>🎮 Games</a></li>
+            </ul>
+            <div class="all-programs-btn">
+              <span>All Programs</span> <span style="font-size: 9px;">▶</span>
+            </div>
+          </div>
+          
+          <!-- RIGHT: Profile Frame & Directory Links -->
+          <div class="start-menu-right">
+            <!-- Framed Profile Avatar utilizing your 65x65px configuration inside 100px border -->
+            <div class="profile-frame-box">
+              <img src="https://lh3.googleusercontent.com/a/ACg8ocKt4czgd7AgTKx6o-KQif0fgAUT4fS_8LAjTZL7GyPFwbTBsZ5a=w65-h65-c" alt="User Pic" class="profile-avatar-img">
+            </div>
+            <span class="username-text">tejas</span>
+            
+            <!-- Quick System Directories Links -->
+            <div class="system-links">
+              <a class="sys-link">Documents</a>
+              <a class="sys-link">Pictures</a>
+              <a class="sys-link">Music</a>
+              <hr class="menu-divider">
+              <a class="sys-link">Computer</a>
+              
+              <!-- BACKGROUND SELECTION MATRIX COMPONENT -->
+              <div class="bg-selector-wrap">
+                <label for="bgChange">Change Wallpaper:</label>
+                <select id="bgChange" onchange="changeBackground(this.value)">
+                  <option value="default">Nano7 default (bubbles.png)</option>
+                  <option value="classic">classic blue</option>
+                  <option value="dark">noir obsidian</option>
+                  <option value="teal">vintage teal</option>
+                </select>
+              </div>
+
+              <hr class="menu-divider">
+              <a href="index.html" class="logoff-button">Log Off</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 4. The Desktop Taskbar -->
+    <div class="taskbar">
+      <div class="invisible-start-click" onclick="toggleStartMenu(event)"></div>
+    </div>
+
+  </div>
+
+  <!-- Dynamic Interaction Scripts Matrix Handling Windows State Controls -->
+  <script>
+    // Taskbar Start Menu Toggle Controls
+    function toggleStartMenu(event) {
+      event.stopPropagation();
+      var menu = document.getElementById('startMenu');
+      menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+    }
+
+    // Auto-closes menu when clicking open wallpaper elements
+    document.getElementById('desktopEnv').addEventListener('click', function(e) {
+      if (!e.target.closest('.invisible-start-click') && !e.target.closest('#startMenu')) {
+        document.getElementById('startMenu').style.display = 'none';
+      }
+    });
+
+    // Real-time Wallpaper Theme Switcher Matrix
+    function changeBackground(styleKey) {
+      var env = document.getElementById('desktopEnv');
+      
+      // Clear any single-property trail values
+      env.style.background = ""; 
+      env.style.backgroundSize = "cover";
+      env.style.backgroundPosition = "center";
+      env.style.backgroundRepeat = "no-repeat";
+
+      if (styleKey === 'default') {
+        env.style.backgroundImage = "url('https://tejasvarman142.neocities.org/bubbles.png')";
+      } else if (styleKey === 'classic') {
+        env.style.background = "#1d5893";
+      } else if (styleKey === 'dark') {
+        env.style.background = "#111111";
+      } else if (styleKey === 'teal') {
+        env.style.background = "#008080";
+      }
+    }
+
+    // WINDOW DRAG-AND-DROP MECHANICS ENGINE (MOUSEDOWN / MOUSEMOVE)
+    (function initDragEngine() {
+      var win = document.getElementById('notepadWin');
+      var header = document.getElementById('notepadHeader');
+      var isDragging = false;
+      var startX, startY, initialLeft, initialTop;
+
+      header.addEventListener('mousedown', function(e) {
+        if (e.target.closest('.title-bar-controls')) return;
+        
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        
+        var computedStyle = window.getComputedStyle(win);
+        initialLeft = parseInt(computedStyle.left, 10) || 60;
+        initialTop = parseInt(computedStyle.top, 10) || 60;
+
+        document.addEventListener('mousemove', dragExecution);
+        document.addEventListener('mouseup', dropExecution);
+      });
+
+      function dragExecution(e) {
+        if (!isDragging) return;
+        var deltaX = e.clientX - startX;
+        var deltaY = e.clientY - startY;
+        win.style.left = (initialLeft + deltaX) + 'px';
+        win.style.top = (initialTop + deltaY) + 'px';
+      }
+
+      function dropExecution() {
+        isDragging = false;
+        document.removeEventListener('mousemove', dragExecution);
+        document.removeEventListener('mouseup', dropExecution);
+      }
+    })();
+
+    // WINDOW EDGE RESIZING CALCULATOR MECHANICS ENGINE
+    (function initResizeEngine() {
+      var win = document.getElementById('notepadWin');
+      var handle = document.getElementById('notepadResizeHandle');
+      var isResizing = false;
+      var startWidth, startHeight, startX, startY;
+
+      handle.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        e.stopPropagation(); 
+        
+        isResizing = true;
+        startX = e.clientX;
+        startY = e.clientY;
+
+        var computedStyle = window.getComputedStyle(win);
+        startWidth = parseInt(computedStyle.width, 10);
+        startHeight = parseInt(computedStyle.height, 10);
+
+        document.addEventListener('mousemove', resizeExecution);
+        document.addEventListener('mouseup', resizeStopExecution);
+      });
+
+      function resizeExecution(e) {
+        if (!isResizing) return;
+        var nextWidth = startWidth + (e.clientX - startX);
+        var nextHeight = startHeight + (e.clientY - startY);
+
+        if (nextWidth > 250) win.style.width = nextWidth + 'px';
+        if (nextHeight > 150) win.style.height = nextHeight + 'px';
+      }
+
+      function resizeStopExecution() {
+        isResizing = false;
+        document.removeEventListener('mousemove', resizeExecution);
+        document.removeEventListener('mouseup', resizeStopExecution);
+      }
+    })();
+  </script>
+
+</body>
+</html>
