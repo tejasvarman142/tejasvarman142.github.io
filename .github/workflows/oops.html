@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>explorer.exe - Class Not Registered</title>
+  <!-- Import the 7.css stylesheet -->
+  <link rel="stylesheet" href="https://unpkg.com/7.css">
+  <style>
+    /* 1. OUTSIDE OF THE SCREEN IS BLACK & CENTERED */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #000000; /* Solid black outside the screen */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* 2. THE CHOSEN VIRTUAL 800x600 CANVAS SCREEN */
+    .screen-canvas {
+      width: 800px;
+      height: 600px;
+      background-image: url('https://tejasvarman142.neocities.org/bubbles.png');
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.8); /* Gives the display screen depth */
+      flex-shrink: 0; /* Keeps it from warping or shrinking on smaller windows */
+    }
+
+    /* 3. SET FIXED WIDTH FOR THE ERROR BOX */
+    .error-dialog {
+      width: 420px;
+    }
+
+    /* 4. REMOVE THE EMBOSSED / BULGING INNER BOX EFFECTS FROM 7.CSS */
+    .window-body {
+      background: #ffffff !important; 
+      border: none !important;
+      box-shadow: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    /* 5. CONTENT BLOCK (TEXT + ICON POSITIONING) */
+    .error-content {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px 15px; 
+    }
+
+    .custom-error-icon {
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+
+    .error-text {
+      font-size: 12px;
+      color: #1e1e1e;
+      line-height: 1.5;
+      padding-top: 4px;
+    }
+
+    /* 6. BOTTOM GRAY BUTTON DESKTOP TRAY */
+    .button-container {
+      background-color: #f0f0f0;
+      padding: 11px 12px;
+      display: flex;
+      justify-content: flex-end;
+      border-top: 1px solid #dfdfdf;
+    }
+    
+    .button-container button {
+      min-width: 75px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- This container frames your 800x600 screen system -->
+  <div class="screen-canvas">
+
+    <!-- The main error popup window container -->
+    <div class="window error-dialog">
+      
+      <!-- Title Bar Frame -->
+      <div class="title-bar">
+        <div class="title-bar-text">explorer.exe</div>
+        <div class="title-bar-controls">
+          <button aria-label="Close" onclick="history.back()"></button>
+        </div>
+      </div>
+
+      <!-- The Window Body Frame -->
+      <div class="window-body">
+        
+        <!-- Content Segment -->
+        <div class="error-content">
+          <!-- Your custom glossy error icon from HiClipart -->
+          <img 
+            class="custom-error-icon" 
+            src="https://p7.hiclipart.com/preview/637/860/914/computer-icons-error-icon-design-graphical-user-interface-others.jpg" 
+            alt="Windows Error Icon"
+          />
+          <div class="error-text">
+            Class not registered
+          </div>
+        </div>
+
+        <!-- Action Button Frame -->
+        <div class="button-container">
+          <button onclick="history.back()">OK</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
